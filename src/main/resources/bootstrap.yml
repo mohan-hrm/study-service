@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: study-service
+
+  cloud:
+    vault:
+      enabled: true
+      uri: http://vault.vault.svc.cluster.local:8200
+      authentication: KUBERNETES
+      kubernetes:
+        role: study-service-role
+        service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+      kv:
+        enabled: true
+        backend: kv
+        default-context: db/study
+        application-name: db
+
+    config:
+      import: vault://
+      uri: http://config-service:8888

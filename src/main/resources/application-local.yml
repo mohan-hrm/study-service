@@ -1,0 +1,31 @@
+server:
+  port: 8090
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/study
+    username: studyuser
+    password: studypassword
+    driver-class-name: org.postgresql.Driver
+
+  cloud:
+    vault:
+      enabled: false
+    config:
+      enabled: false
+      
+scheduler:
+  study:
+    activate-cron: "0 0/2 * * * *" # every 2 mins for testing (change to 1 AM in prod)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    root: INFO
