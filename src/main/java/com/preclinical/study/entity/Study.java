@@ -1,34 +1,73 @@
 package com.preclinical.study.entity;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.preclinical.study.validation.UniqueProtocolNumber;
+import com.preclinical.study.validation.ValidationGroups;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+@NamedEntityGraph(
+	    name = "Study.withPhases",
+	    attributeNodes = @NamedAttributeNode("phases")
+	)
+@Data
 @Entity
 @Table(name = "study")
-public class Study {
+public class Study implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_id")
     private Long studyId;
 
+   // @NotBlank(message = "Study code is required")
+    @Size(max = 50)
     @Column(name = "study_code", nullable = false, unique = true)
     private String studyCode;
 
+    //@NotBlank(message = "Study title cannot be blank")
+    @Size(max = 255)
     @Column(name = "study_title", nullable = false)
     private String studyTitle;
 
+    //@NotBlank(message = "Study type is required")
+    //@Pattern(regexp = "Clinical|Preclinical", message = "Study type must be Clinical or Preclinical")
     @Column(name = "study_type", length = 50)
     private String studyType;
 
+    @Size(max = 150)
     @Column(name = "sponsor_name", length = 150)
     private String sponsorName;
 
+    //@NotBlank(message = "Protocol number is required")
+    @Size(max = 100)
+    @UniqueProtocolNumber (groups = ValidationGroups.OnCreate.class)
     @Column(name = "protocol_number", unique = true, length = 100)
     private String protocolNumber;
 
+    //@NotNull(message = "Start date is required")
+    @PastOrPresent(message = "Start date cannot be in the future")
     @Column(name = "start_date", nullable = false)
     private LocalDate startDate;
 
@@ -38,6 +77,7 @@ public class Study {
     @Column(name = "status", length = 30)
     private String status = "Planned";
 
+    //@NotBlank(message = "Created by is required")
     @Column(name = "created_by", nullable = false)
     private String createdBy;
 
@@ -49,48 +89,14 @@ public class Study {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt = LocalDateTime.now();
+    
+    @JsonProperty("version")
+    @Version // 🔹 Enables optimistic locking
+    @Column(name = "version", nullable = false)
+    private Integer version;
 
     @OneToMany(mappedBy = "study", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<StudyPhase> phases;
 
-    // Getters and Setters
-    // (you can use Lombok if enabled)
-    public Long getStudyId() { return studyId; }
-    public void setStudyId(Long studyId) { this.studyId = studyId; }
-
-    public String getStudyCode() { return studyCode; }
-    public void setStudyCode(String studyCode) { this.studyCode = studyCode; }
-
-    public String getStudyTitle() { return studyTitle; }
-    public void setStudyTitle(String studyTitle) { this.studyTitle = studyTitle; }
-
-    public String getStudyType() { return studyType; }
-    public void setStudyType(String studyType) { this.studyType = studyType; }
-
-    public String getSponsorName() { return sponsorName; }
-    public void setSponsorName(String sponsorName) { this.sponsorName = sponsorName; }
-
-    public String getProtocolNumber() { return protocolNumber; }
-    public void setProtocolNumber(String protocolNumber) { this.protocolNumber = protocolNumber; }
-
-    public LocalDate getStartDate() { return startDate; }
-    public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
-
-    public LocalDate getEndDate() { return endDate; }
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
-
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    public String getCreatedBy() { return createdBy; }
-    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public String getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
-
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

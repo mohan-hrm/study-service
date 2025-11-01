@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class AuditEventListener {
@@ -14,9 +16,10 @@ public class AuditEventListener {
 
     @Async("eventExecutor")
     @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleStudyCreated(StudyCreatedEvent event) {
         var study = event.getStudy();
-        log.info("[AUDIT] Study created: {} | Title: {} | By: {} | Thread: {}",
+        log.info("[AUDIT] [POST-COMMIT] Study created: {} | Title: {} | By: {} | Thread: {}",
                 study.getStudyCode(), study.getStudyTitle(),
                 study.getCreatedBy(), Thread.currentThread().getName());
 

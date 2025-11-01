@@ -1,0 +1,13 @@
+cache:
+  names:
+    studyCache: studyCache
+    studyListCache: studyListCache
+    studyStatusCache: studyStatusCache
+    studyDateRangeCache: studyDateRangeCache
+
+  # TTLs in minutes (or seconds — you can decide the unit)
+  ttl:
+    studyCache: 60
+    studyListCache: 10
+    studyStatusCache: 5
+    studyDateRangeCache: 30

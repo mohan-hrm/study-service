@@ -13,7 +13,16 @@ spring:
       enabled: false
     config:
       enabled: false
-      
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
+    password: reWBSckzuC
+
+# Cache configuration
+  config:
+    import: classpath:cache-config.yaml
 scheduler:
   study:
     activate-cron: "0 0/2 * * * *" # every 2 mins for testing (change to 1 AM in prod)
@@ -29,3 +38,5 @@ management:
 logging:
   level:
     root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

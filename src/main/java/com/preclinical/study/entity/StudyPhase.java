@@ -1,19 +1,38 @@
 package com.preclinical.study.entity;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "study_phase", uniqueConstraints = @UniqueConstraint(columnNames = {"study_id", "phase_name"}))
-public class StudyPhase {
+public class StudyPhase implements Serializable{
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -458922172084961356L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "phase_id")
     private Long phaseId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_id", nullable = false)
+    @JsonBackReference
     private Study study;
 
     @Column(name = "phase_name", nullable = false)

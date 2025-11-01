@@ -8,7 +8,11 @@ import org.springframework.context.ApplicationEvent;
  */
 public class StudyCreatedEvent extends ApplicationEvent {
 
-    private final Study study;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1871060907768482903L;
+	private final Study study;
 
     public StudyCreatedEvent(Object source, Study study) {
         super(source);
